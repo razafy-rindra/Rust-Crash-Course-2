@@ -1,6 +1,7 @@
 // Silence some warnings so they don't distract from the exercise.
 #![allow(dead_code, unused_imports, unused_variables)]
 use crossbeam::channel;
+use std::sync::mpsc::channel;
 use std::thread;
 use std::time::Duration;
 
@@ -95,5 +96,33 @@ fn main() {
     // On the child threads print out the values you receive. Close the sending side in the main
     // thread by calling `drop(tx)` (assuming you named your sender channel variable `tx`).  Join
     // the child threads.
+
+    let (tx, rx) = channel::unbounded();
+
+    let rx2 = rx.clone();
+
+    let words = [
+        "The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog",
+    ];
+
+    let handle_c = thread::spawn(move || {
+        for msg in rx {
+            println!("Thread C: Received {}", msg);
+        }
+    });
+
+    let handle_d = thread::spawn(move || {
+        for msg in rx2 {
+            println!("Thread D: Received {}", msg);
+        }
+    });
+    for word in words {
+        let _ = tx.send(word);
+    }
+
+    drop(tx);
+    handle_c.join().unwrap();
+    handle_d.join().unwrap();
+
     println!("Main thread: Exiting.")
 }
