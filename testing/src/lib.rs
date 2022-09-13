@@ -1,5 +1,9 @@
 pub fn sploosh(x: i32, y: i32, z: i32) -> i32 {
+    // if (x, y, z) == (8, 9, 10) {
+    //     return 7;
+    // }
     match (x, y, z) {
+        (8, 9, 10) => 7,
         (x, _, _) if x < 0 => 99,
         (1, 2, 3) => 4,
         (5, 6, 7) => 3,
@@ -29,6 +33,7 @@ mod test {
     #[test]
     fn sploosh_testing() {
         assert_eq!(sploosh(1, 2, 3), 4);
+        assert_eq!(sploosh(8, 9, 10), 7);
         assert_ne!(sploosh(5, 6, 7), 4);
         assert_eq!(sploosh(-1, 2, 3), 99);
     }
